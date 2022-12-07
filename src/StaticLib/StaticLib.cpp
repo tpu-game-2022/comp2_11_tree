@@ -63,12 +63,44 @@ bool add(tree* t, int key, const char* value)
 	node* p = generate(key, value);
 	if (p == NULL) return false;// メモリ確保できなかった。
 
-	if (t->root == NULL) {
+	if (t->root == NULL) 
+	{
 		t->root = p;
 		return true;
 	}
 
 	// Todo: t->rootの下にkeyの値の大小でleftかrightを切り替えながらpを追加する処理を実装する
+	node* current = t->root;
+
+	while (true)
+	{
+		if (key > current->key)
+		{
+			if (current->right == NULL)
+			{
+				current->right = p;
+				break;
+			}
+
+			current = current->right;
+		}
+		else if (key < current->key)
+		{
+			if (current->left == NULL)
+			{
+				current->left = p;
+				break;
+			}
+
+			current = current->left;
+		}
+		else
+		{
+			memcpy_s(current->value, sizeof(current->value), value, sizeof(current->value));
+			free(p);
+			break;
+		}
+	}
 
 	return true;
 }
@@ -77,11 +109,55 @@ bool add(tree* t, int key, const char* value)
 const char* find(const tree* t, int key)
 {
 	// ToDo: 実装する
+	if (t == NULL || t->root == NULL) return NULL;
+
+	node* current = t->root;
+
+	while (current != NULL)
+	{
+		if (key > current->key)
+		{
+			current = current->right;
+		}
+		else if (key < current->key)
+		{
+			current = current->left;
+		}
+		else
+		{
+			return current->value;
+		}
+	}
+
 	return NULL;
 }
+
 
 // keyの小さな順にコールバック関数funcを呼び出す
 void search(const tree* t, void (*func)(const node* p))
 {
 	// ToDo: 実装する
+	if (t == NULL || t->root == NULL)return;
+
+	execute_ascending(t->root, func);
+}
+
+void execute_ascending(const node* data, void (*func)(const node* p)) {
+	if (data->left == NULL && data->right == NULL)
+	{
+		func(data);
+		return;
+	}
+
+	if (data->left != NULL)
+	{
+		execute_ascending(data->left, func);
+	}
+
+	func(data);
+
+	if (data->right != NULL)
+	{
+		execute_ascending(data->right, func);
+	}
 }
