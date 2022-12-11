@@ -17,12 +17,14 @@ static void release_recursive(node* n)
 {
 	if (n == NULL) return;
 
-	if (n->right) {
+	if (n->right) 
+	{
 		release_recursive(n->right);
 		n->right = NULL;
 	}
 
-	if (n->left) {
+	if (n->left)
+	{
 		release_recursive(n->left);
 		n->left = NULL;
 	}
@@ -38,7 +40,6 @@ void finalize(tree* t)
 	release_recursive(t->root);
 	t->root = NULL;
 }
-
 
 static node* generate(int key, const char* value)
 {
@@ -63,19 +64,64 @@ bool add(tree* t, int key, const char* value)
 	node* p = generate(key, value);
 	if (p == NULL) return false;// メモリ確保できなかった。
 
-	if (t->root == NULL) {
+	if (t->root == NULL) 
+	{
 		t->root = p;
 		return true;
 	}
 
-	// Todo: t->rootの下にkeyの値の大小でleftかrightを切り替えながらpを追加する処理を実装する
+	node* t_data = t->root;
+	
+	while (true) 
+	{
+		if (t_data->key > key)
+		{
+			if (!t_data->left)
+			{
+				t_data->left = p;
+				break;
+			}
 
+			t_data = t_data->left;
+		}
+
+		else if (t_data->key < key)
+		{
+			if (!t_data->right)
+			{
+				t_data->right = p;
+				break;
+			}
+
+			t_data = t_data->right;
+		}
+
+		else
+		{
+			memcpy(t_data, p, sizeof(node));
+			free(p);
+			break;
+		}
+	}
+	// Todo: t->rootの下にkeyの値の大小でleftかrightを切り替えながらpを追加する処理を実装する
 	return true;
 }
 
 // keyの値を見てノードを検索して、値を取得する
 const char* find(const tree* t, int key)
 {
+	if (!t || !t->root)return NULL;
+
+	node* t_data = t->root;
+
+	while (t_data)
+	{
+		if (t_data->key > key) t_data = t_data->left;
+	
+		else if(key > t_data->key) t_data = t_data->right;
+		
+		else return t_data->value;
+	}
 	// ToDo: 実装する
 	return NULL;
 }
@@ -84,4 +130,22 @@ const char* find(const tree* t, int key)
 void search(const tree* t, void (*func)(const node* p))
 {
 	// ToDo: 実装する
+	if (!t || !t->root)return;
+
+	asc_call(t->root, func);
+}
+
+void asc_call(const node* t_data, void (*func)(const node* p)) 
+{
+	if (!t_data->left && !t_data->right)
+	{
+		func(t_data);
+		return;
+	}
+
+	if (t_data->left) asc_call(t_data->left, func);
+	
+	func(t_data);
+
+	if (t_data->right) asc_call(t_data->right, func);
 }
