@@ -33,7 +33,7 @@ static void release_recursive(node* n)
 // 使用メモリの全解放
 void finalize(tree* t)
 {
-	if (t == NULL) return;
+	if (t==NULL) return;
 
 	release_recursive(t->root);
 	t->root = NULL;
@@ -58,30 +58,116 @@ static node* generate(int key, const char* value)
 // keyの値を見てノードを追加する
 bool add(tree* t, int key, const char* value)
 {
-	if (t == NULL) return false;
+	if (!t) return false;
 
 	node* p = generate(key, value);
-	if (p == NULL) return false;// メモリ確保できなかった。
+	if (!p) return false;// メモリ確保できなかった。
 
-	if (t->root == NULL) {
+	if (!t->root) 
+	{
 		t->root = p;
 		return true;
 	}
 
-	// Todo: t->rootの下にkeyの値の大小でleftかrightを切り替えながらpを追加する処理を実装する
+	node* root_data = t->root;
 
+	while (true)
+	{
+		if (key < root_data->key)
+		{
+			if (!root_data->left)
+			{
+				root_data->left = p;
+				break;
+			}
+			root_data = root_data->left;
+		}
+		else if (key >root_data->key)
+		{
+			if (!root_data->right)
+			{
+				root_data->right =p;
+				break;
+			}
+			root_data = root_data->right;
+		}
+		else
+		{
+			memcpy_s(root_data->value, sizeof(root_data->value),value, sizeof(root_data->value));
+			free(p);
+			break;
+		}
+			
+	}
 	return true;
 }
 
 // keyの値を見てノードを検索して、値を取得する
 const char* find(const tree* t, int key)
 {
-	// ToDo: 実装する
+	if (!t->root || !t)return NULL;
+	node* root_data;
+	root_data = t->root;
+	if (root_data->key == key)
+	{
+		return root_data->value;
+	}
+
+	while (root_data!=NULL )
+	{
+		if (key < root_data->key)
+		{
+			if (!root_data->left)return NULL;
+			root_data = root_data->left;
+		}
+
+		else if (key > root_data->key)
+		{
+			if (!root_data->right)return NULL;
+			root_data = root_data->right;
+		}
+
+		else if (key == root_data->key)
+			return root_data->value;
+	}
+
 	return NULL;
+
 }
 
 // keyの小さな順にコールバック関数funcを呼び出す
 void search(const tree* t, void (*func)(const node* p))
 {
-	// ToDo: 実装する
+	if (!t || !t->root)return ;
+
+	if (t->root->left)
+	{
+		exe_small(t->root->left, func);
+	}
+	func(t->root);
+
+	if (t->root->right)
+	{
+		exe_small(t->root->right, func);
+	}
+}
+
+void exe_small(const node* root_data, void (func)(const node* p))
+{
+	if (!root_data->left && !root_data->right)
+	{
+		func(root_data);
+		return;
+
+	}
+	if (root_data->left)
+	{
+		exe_small(root_data->left, func);
+	}
+	func(root_data);
+
+	if (root_data->right)
+	{
+		exe_small(root_data->right, func);
+	}
 }

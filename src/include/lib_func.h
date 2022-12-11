@@ -35,6 +35,8 @@ extern "C" {
 	// keyの小さな順にコールバック関数funcを呼び出す
 	void search(const tree* t, void (*func)(const node* p));
 
+	void exe_small(const node* root_data, void (*func)(const node* p));
+
 	// C++ でCのライブラリを使うときのおまじない
 #ifdef __cplusplus
 } // extern "C"

@@ -205,12 +205,12 @@ namespace UnitTest
 			initialize(&t);
 			const int NUM = 10000;
 			for (int i = 0; i < NUM; i++) {
-				char c[2] = { 'a' + (i%26) };
+				char c[2] = { 'a' + (i % 26) };
 				add(&t, i, c);
 			}
 
 			for (int i = 0; i < NUM; i++) {
-				Assert::AreEqual((char)('a'+(i % 26)), *find(&t, i), (const wchar_t*)("周期的にアルファベットが入出てくるはず"));
+				Assert::AreEqual((char)('a' + (i % 26)), *find(&t, i), (const wchar_t*)("周期的にアルファベットが入出てくるはず"));
 			}
 
 			finalize(&t);
