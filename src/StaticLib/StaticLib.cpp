@@ -69,7 +69,29 @@ bool add(tree* t, int key, const char* value)
 	}
 
 	// Todo: t->rootの下にkeyの値の大小でleftかrightを切り替えながらpを追加する処理を実装する
-
+	node* data;
+	data = t->root;
+	while (true) {
+		if (data->key > key) {
+			if (!data->left) {
+				data->left = p;
+				break;
+			}
+			data = data->left;
+		}
+		else if (data->key < key) {
+			if (!data->right) {
+				data->right = p;
+				break;
+			}
+			data = data->right;
+		}
+		else {
+			memcpy(data, p, sizeof(node));
+			free(p);
+			break;
+		}
+	}
 	return true;
 }
 
@@ -77,6 +99,26 @@ bool add(tree* t, int key, const char* value)
 const char* find(const tree* t, int key)
 {
 	// ToDo: 実装する
+	if (!t || !t->root)return NULL;
+	node* data;
+	data = t->root;
+	if (data->key == key) {
+		return data->value;
+	}
+	while (data) {
+
+		if (data->key > key) {
+			if (!data->left)return NULL;
+			data = data->left;
+		}
+		else {
+			if (!data->right)return NULL;
+			data = data->right;
+		}
+		if (data->key == key) {
+			return data->value;
+		}
+	}
 	return NULL;
 }
 
@@ -84,4 +126,29 @@ const char* find(const tree* t, int key)
 void search(const tree* t, void (*func)(const node* p))
 {
 	// ToDo: 実装する
+	if (!t || !t->root)return;
+
+	if (t->root->left) {
+		small_order(t->root->left, func);
+	}
+	func(t->root);
+
+	if (t->root->right) {
+		small_order(t->root->right, func);
+	}
+}
+
+void small_order(const node* data, void (*func)(const node* p)) {
+	if (!data->left && !data->right) {
+		func(data);
+		return;
+	}
+	if (data->left) {
+		small_order(data->left, func);
+	}
+	func(data);
+
+	if (data->right) {
+		small_order(data->right, func);
+	}
 }
