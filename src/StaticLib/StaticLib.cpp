@@ -67,9 +67,36 @@ bool add(tree* t, int key, const char* value)
 		t->root = p;
 		return true;
 	}
-
 	// Todo: t->rootの下にkeyの値の大小でleftかrightを切り替えながらpを追加する処理を実装する
+	node* rootnode = t->root;
 
+	while(1)
+	{
+		if (key > rootnode->key)
+		{
+			if (rootnode->right == NULL)
+			{
+				rootnode->right = p;
+				break;
+			}
+			rootnode = rootnode->right;
+		}
+		else if (key < rootnode->key)
+		{
+			if (rootnode->left == NULL)
+			{
+				rootnode->left = p;
+				break;
+			}
+			rootnode = rootnode->left;
+		}
+		else
+		{
+			memcpy_s(rootnode->value, sizeof(rootnode->value), value, sizeof(rootnode->value));
+			free(p);
+			break;
+		}
+	}
 	return true;
 }
 
@@ -77,6 +104,16 @@ bool add(tree* t, int key, const char* value)
 const char* find(const tree* t, int key)
 {
 	// ToDo: 実装する
+	if (t == NULL || t->root == NULL) return NULL;
+
+	node* current = t->root;
+
+	while (current != NULL)
+	{
+		if(key == current->key)return current->value;
+		if (key > current->key)current = current->right;
+		if (key < current->key)current = current->left;
+	}
 	return NULL;
 }
 
@@ -84,4 +121,14 @@ const char* find(const tree* t, int key)
 void search(const tree* t, void (*func)(const node* p))
 {
 	// ToDo: 実装する
+	if (t == NULL || t->root == NULL)return;
+	ascending(t->root, func);
+}
+
+void ascending(const node* data, void (*func)(const node* p))
+{
+	if (data->left != NULL)ascending(data->left, func);
+	func(data);
+	if (data->left == NULL && data->right == NULL)return;
+	if (data->right != NULL)ascending(data->right, func);
 }
