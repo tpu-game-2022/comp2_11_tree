@@ -69,7 +69,37 @@ bool add(tree* t, int key, const char* value)
 	}
 
 	// Todo: t->rootの下にkeyの値の大小でleftかrightを切り替えながらpを追加する処理を実装する
+	
+	while (1)
+	{
+		if (p->key < t->root->key)
+		{
+			if (t->root->left == NULL)
+			{
+				t->root->left = p;
+				break;
+			}
 
+			t->root->key = t->root->left->key;
+		}
+
+		else if (p->key > t->root->key)
+		{
+			if (t->root->right == NULL)
+			{
+				t->root->right = p;
+				break;
+			}
+
+			t->root->key = t->root->right->key;
+		}
+
+		else
+		{
+			t->root = p;
+			break;
+		}
+	}
 	return true;
 }
 
@@ -77,7 +107,22 @@ bool add(tree* t, int key, const char* value)
 const char* find(const tree* t, int key)
 {
 	// ToDo: 実装する
-	return NULL;
+	while (1)
+	{
+		if (key < t->root->key)
+		{
+			t->root->key = t->root->left->key;
+		}
+		else if (key > t->root->key)
+		{
+			t->root->key = t->root->right->key;
+		}
+		else
+		{
+			break;
+		}
+	}
+	return t->root->value;
 }
 
 // keyの小さな順にコールバック関数funcを呼び出す
