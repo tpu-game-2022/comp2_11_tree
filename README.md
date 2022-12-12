@@ -4,7 +4,7 @@
 
 二分木のライブラリとユニットテストとテストアプリケーションのプログラムを作成しました。
 ただし、中身が実装されていません。
-実装して、ユニットテストが通るようにしてください。
+実装して、ユニットテストが通るようにしてください。　
 
 [![MS Build and Test](https://github.com/shion-018/comp2_11_tree/actions/workflows/ms_test.yml/badge.svg)](https://github.com/shion-018/comp2_11_tree/actions/workflows/ms_test.yml)
 
