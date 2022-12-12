@@ -70,6 +70,27 @@ bool add(tree* t, int key, const char* value)
 
 	// Todo: t->rootの下にkeyの値の大小でleftかrightを切り替えながらpを追加する処理を実装する
 
+	while (1)
+	{
+		if (key > t->root->key)
+		{
+			if (t->root->right == NULL)
+			{
+				t->root->right = p;
+				break;
+			}
+			t->root = t->root->right;
+		}
+		else if (key < t->root->key)
+		{
+			if (t->root->left == NULL)
+			{
+				t->root->left = p;
+				break;
+			}
+			t->root = t->root->left;
+		}
+	}
 	return true;
 }
 
