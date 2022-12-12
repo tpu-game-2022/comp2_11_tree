@@ -1,4 +1,7 @@
-﻿#define WIN32_LEAN_AND_MEAN             // Windows ヘッダーからほとんど使用されていない部分を除外する
+﻿#define WIN32_LEAN_AND_MEAN    
+#define MIN(a,b) (((a)<(b))?(a):(b))
+#define MAX(a,b) (((a)>(b))?(a):(b))
+ // Windows ヘッダーからほとんど使用されていない部分を除外する
 #include "Windows.h"                    // Windows API の機能定義
 #include <stdlib.h>
 
@@ -63,11 +66,20 @@ bool add(tree* t, int key, const char* value)
 	node* p = generate(key, value);
 	if (p == NULL) return false;// メモリ確保できなかった。
 
-	if (t->root == NULL) {
+	if (t->root == NULL)
+	{
 		t->root = p;
 		return true;
 	}
-
+	if(key>t->root->key)
+	{
+		t->root->right = p;
+	}
+	else
+	{
+		t->root->left = p;
+	}
+	
 	// Todo: t->rootの下にkeyの値の大小でleftかrightを切り替えながらpを追加する処理を実装する
 
 	return true;
@@ -76,6 +88,8 @@ bool add(tree* t, int key, const char* value)
 // keyの値を見てノードを検索して、値を取得する
 const char* find(const tree* t, int key)
 {
+	if (t->root == NULL) return NULL;
+
 	// ToDo: 実装する
 	return NULL;
 }
