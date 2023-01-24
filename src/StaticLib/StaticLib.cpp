@@ -48,7 +48,7 @@ static node* generate(int key, const char* value)
 
 	p->key = key;
 	int n = (int)strlen(value);
-	memcpy(p->value, value, strlen(value)+1);
+	memcpy(p->value, value, strlen(value) + 1);
 
 	p->left = p->right = NULL;
 
@@ -69,6 +69,29 @@ bool add(tree* t, int key, const char* value)
 	}
 
 	// Todo: t->rootの下にkeyの値の大小でleftかrightを切り替えながらpを追加する処理を実装する
+	node* current = t->root;
+	while (true)
+	{
+		if (key > current->key) {
+			if (current->right == NULL) {
+				current->right = p;
+				break;
+			}
+			current = current->right;
+		}
+		else if (key < current->key) {
+			if (current->left == NULL) {
+				current->left = p;
+				break;
+			}
+			current = current->left;
+		}
+		else {
+			memcpy_s(current->value, sizeof(current->value), value, sizeof(current->value));
+			free(p);
+			break;
+		}
+	}
 
 	return true;
 }
@@ -77,11 +100,42 @@ bool add(tree* t, int key, const char* value)
 const char* find(const tree* t, int key)
 {
 	// ToDo: 実装する
+	if (t == NULL || t->root == NULL)return NULL;
+	node* current = t->root;
+	while (current != NULL) {
+		if (key > current->key) {
+			current = current->right;
+		}
+		else if (key < current->key) {
+			current = current->left;
+		}
+		else {
+			return current->value;
+		}
+	}
 	return NULL;
 }
+void CallBackCome(const node* tree, void (*func)(const node* p))
+{
+	if (tree->right == NULL && tree->left == NULL)
+	{
+		func(tree);
+		return;
+	}
 
+	if (tree->left)
+		CallBackCome(tree->left, func);
+
+	func(tree);
+
+	if (tree->right)
+		CallBackCome(tree->right, func);
+}
 // keyの小さな順にコールバック関数funcを呼び出す
 void search(const tree* t, void (*func)(const node* p))
 {
 	// ToDo: 実装する
+	if (t == NULL || t->root == NULL)return;
+	CallBackCome(t->root, func);
+
 }
